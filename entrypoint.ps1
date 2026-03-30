@@ -18,6 +18,14 @@ if (-not (Test-Path $CakeScript)) {
     exit 1
 }
 
+# Restore local tools if a manifest exists (e.g. .config/dotnet-tools.json).
+# This is a no-op when the project uses the globally installed Cake instead.
+if (Test-Path ".config/dotnet-tools.json") {
+    Write-Host "Restoring local .NET tools..." -ForegroundColor Cyan
+    dotnet tool restore
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}
+
 dotnet cake $CakeScript --target=$CakeTarget --verbosity=$CakeVerbosity
 
 exit $LASTEXITCODE
