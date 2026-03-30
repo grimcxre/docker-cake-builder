@@ -1,0 +1,20 @@
+services:
+  cake-builder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cake-builder:latest
+    environment:
+      # Path to the Cake script relative to the mounted project root
+      CAKE_SCRIPT: ${CAKE_SCRIPT:-build.cake}
+      # Cake target to run
+      CAKE_TARGET: ${CAKE_TARGET:-Default}
+      # Verbosity: Quiet | Minimal | Normal | Verbose | Diagnostic
+      CAKE_VERBOSITY: ${CAKE_VERBOSITY:-Normal}
+    # Persist NuGet package cache across builds for speed
+    volumes:
+      - ${PROJECT_DIR:-C:/Users/CAS/Documents/code}:-C:/build
+      - cake-nuget-cache:-C:/Users/ContainerAdministrator/AppData/Roaming/NuGet
+
+volumes:
+  cake-nuget-cache:
