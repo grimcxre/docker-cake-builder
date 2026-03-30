@@ -28,6 +28,19 @@ RUN $gitBin = 'C:\Program Files\Git\cmd'; \
     $cur = [Environment]::GetEnvironmentVariable('PATH', 'Machine'); \
     [Environment]::SetEnvironmentVariable('PATH', ($cur + ';' + $gitBin), 'Machine')
 
+# Install 7-Zip via direct download — no Chocolatey hard-link issues
+ARG SEVENZIP_VERSION=2409
+ARG SEVENZIP_URL=https://www.7-zip.org/a/7z2409-x64.exe
+
+RUN Write-Host "Installing 7-Zip $env:SEVENZIP_VERSION ..."; \
+    Invoke-WebRequest -Uri $env:SEVENZIP_URL -OutFile C:\7z-setup.exe -UseBasicParsing; \
+    Start-Process C:\7z-setup.exe -ArgumentList '/S' -Wait; \
+    Remove-Item C:\7z-setup.exe -Force; \
+    $szBin = 'C:\Program Files\7-Zip'; \
+    $cur = [Environment]::GetEnvironmentVariable('PATH', 'Machine'); \
+    [Environment]::SetEnvironmentVariable('PATH', ($cur + ';' + $szBin), 'Machine'); \
+    Write-Host "7-Zip installed."
+
 # Install Cake as a .NET global tool
 RUN dotnet tool install --global Cake.Tool; \
     $toolPath = 'C:\Users\ContainerAdministrator\AppData\Roaming\dotnet\tools'; \
